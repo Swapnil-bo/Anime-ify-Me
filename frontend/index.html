@@ -3,13 +3,240 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Anime-ify Me</title>
+    <meta name="description" content="Describe yourself. Get your anime character — name, archetype, backstory, power, and stat block. Powered by local AI." />
+    <meta property="og:title" content="Anime-ify Me" />
+    <meta property="og:description" content="Forge your anime identity. Powered by Mistral 7B running fully local." />
+    <meta name="theme-color" content="#0a0a0f" />
+    <title>Anime-ify Me — Forge Your Anime Identity</title>
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Rajdhani:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;700&family=Zen+Antique+Soft&display=swap" rel="stylesheet" />
+
+    <style>
+      *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+      :root {
+        --void: #0a0a0f;
+        --crimson: #e63946;
+        --soul-gold: #ffd60a;
+        --power-blue: #4cc9f0;
+      }
+
+      html, body {
+        background: var(--void);
+        color: #e8e8f0;
+        font-family: 'Rajdhani', sans-serif;
+        overflow-x: hidden;
+        min-height: 100vh;
+      }
+
+      /* Custom cursor — a crosshair reticle */
+      * { cursor: none !important; }
+
+      #cursor {
+        position: fixed;
+        width: 20px;
+        height: 20px;
+        pointer-events: none;
+        z-index: 99999;
+        transform: translate(-50%, -50%);
+        transition: transform 0.08s ease;
+      }
+
+      #cursor::before,
+      #cursor::after {
+        content: '';
+        position: absolute;
+        background: var(--crimson);
+      }
+
+      /* Horizontal line */
+      #cursor::before {
+        width: 20px; height: 1px;
+        top: 50%; left: 0;
+        transform: translateY(-50%);
+      }
+
+      /* Vertical line */
+      #cursor::after {
+        width: 1px; height: 20px;
+        left: 50%; top: 0;
+        transform: translateX(-50%);
+      }
+
+      #cursor-dot {
+        position: fixed;
+        width: 4px;
+        height: 4px;
+        background: var(--soul-gold);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 99999;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 8px var(--soul-gold);
+      }
+
+      /* Pre-mount loading screen — prevents white flash */
+      #preloader {
+        position: fixed;
+        inset: 0;
+        background: var(--void);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.8s ease, visibility 0.8s ease;
+      }
+
+      #preloader.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .preloader-kanji {
+        font-family: 'Noto Serif JP', serif;
+        font-size: 5rem;
+        color: var(--crimson);
+        opacity: 0;
+        animation: kanjiReveal 1.2s ease forwards;
+        text-shadow: 0 0 40px rgba(230, 57, 70, 0.6);
+        letter-spacing: 0.5rem;
+      }
+
+      .preloader-sub {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.75rem;
+        letter-spacing: 0.4rem;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.3);
+        margin-top: 1.5rem;
+        opacity: 0;
+        animation: kanjiReveal 1s ease 0.5s forwards;
+      }
+
+      .preloader-bar-wrap {
+        width: 120px;
+        height: 1px;
+        background: rgba(255,255,255,0.08);
+        margin-top: 2rem;
+        overflow: hidden;
+      }
+
+      .preloader-bar {
+        height: 100%;
+        background: var(--crimson);
+        animation: barSweep 1.4s ease forwards;
+        box-shadow: 0 0 10px var(--crimson);
+      }
+
+      /* Global scanline texture overlay */
+      #scanlines {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9998;
+        background: repeating-linear-gradient(
+          to bottom,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.03) 2px,
+          rgba(0, 0, 0, 0.03) 4px
+        );
+      }
+
+      /* Ambient corner vignette */
+      #vignette {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9997;
+        background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.7) 100%);
+      }
+
+      /* Floating kanji watermarks */
+      .kanji-float {
+        position: fixed;
+        font-family: 'Noto Serif JP', serif;
+        font-size: 12rem;
+        font-weight: 700;
+        color: rgba(230, 57, 70, 0.025);
+        pointer-events: none;
+        z-index: 0;
+        user-select: none;
+        animation: floatDrift linear infinite;
+      }
+
+      @keyframes kanjiReveal {
+        0% { opacity: 0; transform: translateY(10px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes barSweep {
+        0% { width: 0%; }
+        100% { width: 100%; }
+      }
+
+      @keyframes floatDrift {
+        0% { transform: translateY(0px) rotate(-5deg); }
+        50% { transform: translateY(-30px) rotate(-5deg); }
+        100% { transform: translateY(0px) rotate(-5deg); }
+      }
+
+      /* React root sits above all layers */
+      #root { position: relative; z-index: 1; }
+    </style>
   </head>
+
   <body>
+    <!-- Custom cursor -->
+    <div id="cursor"></div>
+    <div id="cursor-dot"></div>
+
+    <!-- Atmospheric layers -->
+    <div id="scanlines"></div>
+    <div id="vignette"></div>
+
+    <!-- Floating kanji watermarks -->
+    <div class="kanji-float" style="top: -4rem; left: -3rem; animation-duration: 18s;">魂</div>
+    <div class="kanji-float" style="bottom: -4rem; right: -2rem; animation-duration: 24s; animation-delay: -8s; color: rgba(76,201,240,0.02);">力</div>
+    <div class="kanji-float" style="top: 40%; right: 5%; font-size: 7rem; animation-duration: 14s; animation-delay: -3s;">剣</div>
+
+    <!-- Pre-mount screen -->
+    <div id="preloader">
+      <div class="preloader-kanji">アニメ</div>
+      <div class="preloader-sub">Forging your anime identity</div>
+      <div class="preloader-bar-wrap">
+        <div class="preloader-bar"></div>
+      </div>
+    </div>
+
+    <!-- React mounts here -->
     <div id="root"></div>
+
     <script type="module" src="/src/main.jsx"></script>
+
+    <script>
+      // Custom cursor tracking
+      const cursor = document.getElementById('cursor');
+      const dot = document.getElementById('cursor-dot');
+      document.addEventListener('mousemove', e => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+        dot.style.left = e.clientX + 'px';
+        dot.style.top = e.clientY + 'px';
+      });
+
+      // Dismiss preloader once React has mounted
+      window.dismissPreloader = function() {
+        const p = document.getElementById('preloader');
+        if (p) {
+          p.classList.add('hidden');
+          setTimeout(() => p.remove(), 900);
+        }
+      };
+    </script>
   </body>
 </html>
