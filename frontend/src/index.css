@@ -3,11 +3,6 @@
 @tailwind utilities;
 
 /* ============================================
-   IMPORTS
-   ============================================ */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@300;400;700&family=Zen+Antique+Soft&display=swap');
-
-/* ============================================
    CSS VARIABLES — FULL DESIGN TOKEN SYSTEM
    ============================================ */
 :root {
@@ -130,11 +125,10 @@
   /* Image defaults */
   img, svg { display: block; max-width: 100%; }
 
-  /* Button reset */
+  /* Button reset — no cursor override, index.html handles custom cursor globally */
   button {
     border: none;
     background: none;
-    cursor: pointer;
     font-family: inherit;
     color: inherit;
   }
@@ -149,7 +143,13 @@
   }
 
   /* Smooth color transitions on interactive elements */
-  a, button, input, textarea { transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast); }
+  a, button, input, textarea {
+    transition:
+      color var(--transition-fast),
+      background var(--transition-fast),
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
 }
 
 /* ============================================
@@ -429,7 +429,7 @@
     border-radius: 0;
     clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
     overflow: hidden;
-    cursor: pointer;
+    cursor: none;
     transition: transform var(--transition-fast), box-shadow var(--transition-normal);
   }
 
@@ -481,7 +481,7 @@
     color: var(--text-secondary);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 0;
-    cursor: pointer;
+    cursor: none;
     transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
   }
 
@@ -788,12 +788,12 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   }
 
-  /* Anime speed lines background */
+  /* Anime speed lines background — opacity raised to 0.03 for visibility */
   .bg-speed-lines {
     background-image: repeating-conic-gradient(
       from 0deg,
-      rgba(255,255,255,0.01) 0deg,
-      rgba(255,255,255,0.01) 1deg,
+      rgba(255,255,255,0.03) 0deg,
+      rgba(255,255,255,0.03) 1deg,
       transparent 1deg,
       transparent 4deg
     );
@@ -907,8 +907,8 @@
    ============================================ */
 
 /* Framer-friendly helper classes for initial states */
-.animate-card-rise   { animation: cardRise  0.6s var(--ease-out-expo) forwards; }
-.animate-fade-in     { animation: fadeIn    0.5s var(--ease-out-expo) forwards; }
+.animate-card-rise   { animation: cardRise   0.6s var(--ease-out-expo) forwards; }
+.animate-fade-in     { animation: fadeIn     0.5s var(--ease-out-expo) forwards; }
 .animate-slide-left  { animation: slideInLeft 0.4s var(--ease-out-expo) forwards; }
 
 /* Staggered animation delays */
