@@ -1,0 +1,215 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   BASE
+   ============================================ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #0a0a0f;
+    color: #e8e8f0;
+    font-family: 'Rajdhani', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: rgba(230, 57, 70, 0.3);
+    color: #ffd60a;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #0a0a0f;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #e63946;
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ffd60a;
+  }
+}
+
+/* ============================================
+   COMPONENTS
+   ============================================ */
+@layer components {
+
+  /* Anime-style section divider */
+  .divider-blade {
+    @apply relative flex items-center gap-4 my-6;
+  }
+
+  .divider-blade::before,
+  .divider-blade::after {
+    content: '';
+    @apply flex-1 h-px;
+    background: linear-gradient(to right, transparent, rgba(230, 57, 70, 0.4), transparent);
+  }
+
+  /* Glowing label pill */
+  .label-pill {
+    @apply text-xs font-rajdhani font-semibold tracking-widest uppercase px-3 py-1 rounded-sm;
+    border: 1px solid rgba(255, 214, 10, 0.2);
+    color: rgba(255, 214, 10, 0.7);
+    background: rgba(255, 214, 10, 0.05);
+    letter-spacing: 0.2em;
+  }
+
+  /* Corner bracket decoration — top-left */
+  .bracket-tl {
+    @apply absolute top-0 left-0 w-5 h-5;
+    border-top: 1px solid rgba(230, 57, 70, 0.6);
+    border-left: 1px solid rgba(230, 57, 70, 0.6);
+  }
+
+  /* Corner bracket decoration — bottom-right */
+  .bracket-br {
+    @apply absolute bottom-0 right-0 w-5 h-5;
+    border-bottom: 1px solid rgba(230, 57, 70, 0.6);
+    border-right: 1px solid rgba(230, 57, 70, 0.6);
+  }
+
+  /* Stat bar track */
+  .stat-track {
+    @apply relative w-full h-1.5 rounded-full overflow-hidden;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  /* Stat bar fill — color set via inline style */
+  .stat-fill {
+    @apply h-full rounded-full;
+    animation: statFill 1.2s ease-out forwards;
+    width: var(--stat-width, 0%);
+    box-shadow: 0 0 8px currentColor;
+  }
+
+  /* Card glass panel */
+  .glass-panel {
+    @apply relative rounded-sm p-6;
+    background: rgba(15, 15, 26, 0.85);
+    border: 1px solid rgba(30, 30, 58, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Input field */
+  .anime-input {
+    @apply w-full bg-transparent rounded-sm px-4 py-3 text-base outline-none transition-all duration-300;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    color: #e8e8f0;
+    border: 1px solid rgba(30, 30, 58, 0.9);
+    caret-color: #e63946;
+  }
+
+  .anime-input::placeholder {
+    color: rgba(232, 232, 240, 0.2);
+    font-style: italic;
+  }
+
+  .anime-input:focus {
+    border-color: rgba(230, 57, 70, 0.5);
+    box-shadow: 0 0 0 1px rgba(230, 57, 70, 0.15), 0 0 20px rgba(230, 57, 70, 0.08);
+  }
+
+  /* Primary CTA button */
+  .btn-forge {
+    @apply relative overflow-hidden px-8 py-3 font-bold tracking-widest uppercase text-sm transition-all duration-300;
+    font-family: 'Rajdhani', sans-serif;
+    background: #e63946;
+    color: #0a0a0f;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    letter-spacing: 0.2em;
+  }
+
+  .btn-forge::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: linear-gradient(135deg, #ffd60a, #e63946);
+  }
+
+  .btn-forge:hover::before {
+    opacity: 1;
+  }
+
+  .btn-forge:hover {
+    box-shadow: 0 0 30px rgba(230, 57, 70, 0.5);
+    transform: translateY(-1px);
+  }
+
+  .btn-forge:active {
+    transform: translateY(0);
+  }
+
+  .btn-forge span {
+    @apply relative z-10;
+  }
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+@layer utilities {
+  .font-cinzel { font-family: 'Cinzel', serif; }
+  .font-cinzel-decorative { font-family: 'Cinzel Decorative', serif; }
+  .font-rajdhani { font-family: 'Rajdhani', sans-serif; }
+  .font-noto-jp { font-family: 'Noto Serif JP', serif; }
+
+  .text-glow-crimson {
+    text-shadow: 0 0 20px rgba(230, 57, 70, 0.6);
+  }
+
+  .text-glow-gold {
+    text-shadow: 0 0 20px rgba(255, 214, 10, 0.6);
+  }
+
+  .text-glow-blue {
+    text-shadow: 0 0 20px rgba(76, 201, 240, 0.6);
+  }
+
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+
+  .clip-blade {
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  }
+
+  .clip-blade-right {
+    clip-path: polygon(0% 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  }
+}
+
+/* ============================================
+   KEYFRAMES
+   ============================================ */
+@keyframes statFill {
+  0% { width: 0%; opacity: 0.5; }
+  100% { width: var(--stat-width, 0%); opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, #ffd60a, #e63946, #ffd60a);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
