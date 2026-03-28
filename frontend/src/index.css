@@ -3,42 +3,153 @@
 @tailwind utilities;
 
 /* ============================================
-   BASE
+   IMPORTS
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@300;400;700&family=Zen+Antique+Soft&display=swap');
+
+/* ============================================
+   CSS VARIABLES — FULL DESIGN TOKEN SYSTEM
+   ============================================ */
+:root {
+  /* Core palette */
+  --void:            #0a0a0f;
+  --void-2:          #0f0f1a;
+  --void-3:          #13131f;
+  --card-bg:         #0d0d18;
+  --card-border:     rgba(30, 30, 60, 0.8);
+
+  /* Accent spectrum */
+  --crimson:         #e63946;
+  --crimson-dim:     rgba(230, 57, 70, 0.15);
+  --crimson-glow:    rgba(230, 57, 70, 0.4);
+  --soul-gold:       #ffd60a;
+  --soul-gold-dim:   rgba(255, 214, 10, 0.12);
+  --soul-gold-glow:  rgba(255, 214, 10, 0.45);
+  --power-blue:      #4cc9f0;
+  --power-blue-dim:  rgba(76, 201, 240, 0.12);
+  --power-blue-glow: rgba(76, 201, 240, 0.4);
+  --shadow-purple:   #7b2d8b;
+  --sage:            #2ec4b6;
+
+  /* Stat bar colors */
+  --stat-str:   #e63946;
+  --stat-int:   #4cc9f0;
+  --stat-chi:   #2ec4b6;
+  --stat-will:  #ffd60a;
+  --stat-shadow:#7b2d8b;
+
+  /* Typography */
+  --font-title:   'Cinzel Decorative', serif;
+  --font-heading: 'Cinzel', serif;
+  --font-body:    'Rajdhani', sans-serif;
+  --font-lore:    'Noto Serif JP', serif;
+  --font-antique: 'Zen Antique Soft', serif;
+
+  /* Text */
+  --text-primary:   #e8e8f0;
+  --text-secondary: rgba(232, 232, 240, 0.55);
+  --text-muted:     rgba(232, 232, 240, 0.25);
+  --text-ghost:     rgba(232, 232, 240, 0.08);
+
+  /* Spacing rhythm */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+
+  /* Transitions */
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-expo:  cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  --transition-fast:   0.15s var(--ease-out-expo);
+  --transition-normal: 0.3s  var(--ease-out-expo);
+  --transition-slow:   0.6s  var(--ease-out-expo);
+}
+
+/* ============================================
+   RESET & BASE
    ============================================ */
 @layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
   html {
     scroll-behavior: smooth;
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
-    background-color: #0a0a0f;
-    color: #e8e8f0;
-    font-family: 'Rajdhani', sans-serif;
+    background-color: var(--void);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    min-height: 100vh;
   }
 
+  /* Crimson text selection — small detail, huge feel */
   ::selection {
-    background: rgba(230, 57, 70, 0.3);
-    color: #ffd60a;
+    background: rgba(230, 57, 70, 0.25);
+    color: var(--soul-gold);
   }
 
-  ::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #0a0a0f;
-  }
-
+  /* Thin crimson scrollbar */
+  ::-webkit-scrollbar       { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--void); }
   ::-webkit-scrollbar-thumb {
-    background: #e63946;
+    background: var(--crimson);
     border-radius: 2px;
   }
+  ::-webkit-scrollbar-thumb:hover { background: var(--soul-gold); }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #ffd60a;
+  /* Headings default to Cinzel */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
   }
+
+  /* Focus visible — accessibility */
+  :focus-visible {
+    outline: 1px solid var(--crimson);
+    outline-offset: 3px;
+  }
+
+  /* Remove focus for mouse users */
+  :focus:not(:focus-visible) { outline: none; }
+
+  /* Image defaults */
+  img, svg { display: block; max-width: 100%; }
+
+  /* Button reset */
+  button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+    color: inherit;
+  }
+
+  /* Input reset */
+  input, textarea {
+    border: none;
+    background: none;
+    font-family: inherit;
+    color: inherit;
+    outline: none;
+  }
+
+  /* Smooth color transitions on interactive elements */
+  a, button, input, textarea { transition: color var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast); }
 }
 
 /* ============================================
@@ -46,115 +157,592 @@
    ============================================ */
 @layer components {
 
-  /* Anime-style section divider */
+  /* ------------------------------------------
+     GLASS PANEL — base card surface
+  ------------------------------------------ */
+  .glass-panel {
+    position: relative;
+    background: rgba(13, 13, 24, 0.9);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  /* Ambient top edge highlight */
+  .glass-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(230, 57, 70, 0.3), transparent);
+    pointer-events: none;
+  }
+
+  /* ------------------------------------------
+     CORNER BRACKETS — anime UI decoration
+  ------------------------------------------ */
+  .bracket-tl,
+  .bracket-tr,
+  .bracket-bl,
+  .bracket-br {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+  }
+
+  .bracket-tl {
+    top: 0; left: 0;
+    border-top:  1px solid rgba(230, 57, 70, 0.5);
+    border-left: 1px solid rgba(230, 57, 70, 0.5);
+  }
+
+  .bracket-tr {
+    top: 0; right: 0;
+    border-top:   1px solid rgba(230, 57, 70, 0.5);
+    border-right: 1px solid rgba(230, 57, 70, 0.5);
+  }
+
+  .bracket-bl {
+    bottom: 0; left: 0;
+    border-bottom: 1px solid rgba(230, 57, 70, 0.5);
+    border-left:   1px solid rgba(230, 57, 70, 0.5);
+  }
+
+  .bracket-br {
+    bottom: 0; right: 0;
+    border-bottom: 1px solid rgba(230, 57, 70, 0.5);
+    border-right:  1px solid rgba(230, 57, 70, 0.5);
+  }
+
+  /* ------------------------------------------
+     DIVIDERS
+  ------------------------------------------ */
   .divider-blade {
-    @apply relative flex items-center gap-4 my-6;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
   }
 
   .divider-blade::before,
   .divider-blade::after {
     content: '';
-    @apply flex-1 h-px;
-    background: linear-gradient(to right, transparent, rgba(230, 57, 70, 0.4), transparent);
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(230, 57, 70, 0.25), transparent);
   }
 
-  /* Glowing label pill */
+  .divider-kanji {
+    font-family: var(--font-lore);
+    font-size: 0.65rem;
+    color: rgba(230, 57, 70, 0.35);
+    letter-spacing: 0.3em;
+    user-select: none;
+  }
+
+  /* Horizontal rule override */
+  hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.06), transparent);
+    margin: 1.5rem 0;
+  }
+
+  /* ------------------------------------------
+     LABEL PILLS
+  ------------------------------------------ */
   .label-pill {
-    @apply text-xs font-rajdhani font-semibold tracking-widest uppercase px-3 py-1 rounded-sm;
-    border: 1px solid rgba(255, 214, 10, 0.2);
-    color: rgba(255, 214, 10, 0.7);
-    background: rgba(255, 214, 10, 0.05);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.65rem;
+    border: 1px solid rgba(255, 214, 10, 0.18);
+    color: rgba(255, 214, 10, 0.65);
+    background: rgba(255, 214, 10, 0.04);
+    border-radius: 0;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+  }
+
+  .label-pill.blue {
+    border-color: rgba(76, 201, 240, 0.2);
+    color: rgba(76, 201, 240, 0.7);
+    background: rgba(76, 201, 240, 0.04);
+  }
+
+  .label-pill.crimson {
+    border-color: rgba(230, 57, 70, 0.25);
+    color: rgba(230, 57, 70, 0.75);
+    background: rgba(230, 57, 70, 0.05);
+  }
+
+  /* ------------------------------------------
+     STAT BARS
+  ------------------------------------------ */
+  .stat-row {
+    display: grid;
+    grid-template-columns: 52px 1fr 36px;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .stat-label {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 700;
     letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
   }
 
-  /* Corner bracket decoration — top-left */
-  .bracket-tl {
-    @apply absolute top-0 left-0 w-5 h-5;
-    border-top: 1px solid rgba(230, 57, 70, 0.6);
-    border-left: 1px solid rgba(230, 57, 70, 0.6);
-  }
-
-  /* Corner bracket decoration — bottom-right */
-  .bracket-br {
-    @apply absolute bottom-0 right-0 w-5 h-5;
-    border-bottom: 1px solid rgba(230, 57, 70, 0.6);
-    border-right: 1px solid rgba(230, 57, 70, 0.6);
-  }
-
-  /* Stat bar track */
   .stat-track {
-    @apply relative w-full h-1.5 rounded-full overflow-hidden;
-    background: rgba(255, 255, 255, 0.06);
+    position: relative;
+    width: 100%;
+    height: 3px;
+    border-radius: 0;
+    background: rgba(255, 255, 255, 0.05);
+    overflow: visible;
   }
 
-  /* Stat bar fill — color set via inline style */
+  /* Subtle glow behind the track */
+  .stat-track::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: transparent;
+    border-radius: 0;
+  }
+
   .stat-fill {
-    @apply h-full rounded-full;
-    animation: statFill 1.2s ease-out forwards;
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
     width: var(--stat-width, 0%);
-    box-shadow: 0 0 8px currentColor;
+    border-radius: 0;
+    animation: statReveal 1.4s var(--ease-out-expo) forwards;
+    animation-delay: var(--stat-delay, 0ms);
+    transform-origin: left;
+    /* Color set per-stat via inline style */
   }
 
-  /* Card glass panel */
-  .glass-panel {
-    @apply relative rounded-sm p-6;
-    background: rgba(15, 15, 26, 0.85);
-    border: 1px solid rgba(30, 30, 58, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+  /* Glow dot at the leading edge */
+  .stat-fill::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 8px 2px currentColor;
+    opacity: 0;
+    animation: dotAppear 0.2s ease forwards;
+    animation-delay: calc(var(--stat-delay, 0ms) + 1.2s);
   }
 
-  /* Input field */
+  .stat-value {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    text-align: right;
+  }
+
+  /* ------------------------------------------
+     INPUT FIELD
+  ------------------------------------------ */
   .anime-input {
-    @apply w-full bg-transparent rounded-sm px-4 py-3 text-base outline-none transition-all duration-300;
-    font-family: 'Rajdhani', sans-serif;
+    width: 100%;
+    background: rgba(10, 10, 15, 0.6);
+    border: 1px solid rgba(30, 30, 60, 0.9);
+    border-radius: 0;
+    padding: 0.875rem 1rem;
+    font-family: var(--font-body);
     font-size: 1rem;
-    color: #e8e8f0;
-    border: 1px solid rgba(30, 30, 58, 0.9);
-    caret-color: #e63946;
+    font-weight: 400;
+    color: var(--text-primary);
+    caret-color: var(--crimson);
+    transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+    resize: none;
   }
 
   .anime-input::placeholder {
-    color: rgba(232, 232, 240, 0.2);
+    color: var(--text-muted);
     font-style: italic;
+    font-weight: 300;
   }
 
   .anime-input:focus {
-    border-color: rgba(230, 57, 70, 0.5);
-    box-shadow: 0 0 0 1px rgba(230, 57, 70, 0.15), 0 0 20px rgba(230, 57, 70, 0.08);
+    border-color: rgba(230, 57, 70, 0.4);
+    box-shadow:
+      0 0 0 1px rgba(230, 57, 70, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.02);
   }
 
-  /* Primary CTA button */
-  .btn-forge {
-    @apply relative overflow-hidden px-8 py-3 font-bold tracking-widest uppercase text-sm transition-all duration-300;
-    font-family: 'Rajdhani', sans-serif;
-    background: #e63946;
-    color: #0a0a0f;
-    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-    letter-spacing: 0.2em;
+  /* Typing indicator — crimson left accent */
+  .anime-input-wrap {
+    position: relative;
   }
 
-  .btn-forge::before {
+  .anime-input-wrap::before {
     content: '';
-    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
-    background: linear-gradient(135deg, #ffd60a, #e63946);
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--crimson);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
   }
 
-  .btn-forge:hover::before {
+  .anime-input-wrap:focus-within::before {
     opacity: 1;
   }
 
-  .btn-forge:hover {
-    box-shadow: 0 0 30px rgba(230, 57, 70, 0.5);
-    transform: translateY(-1px);
+  /* ------------------------------------------
+     FORGE BUTTON — primary CTA
+  ------------------------------------------ */
+  .btn-forge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.875rem 2.5rem;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--void);
+    background: var(--crimson);
+    border: none;
+    border-radius: 0;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-normal);
   }
 
-  .btn-forge:active {
-    transform: translateY(0);
+  /* Shimmer sweep on hover */
+  .btn-forge::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.2) 50%, transparent 65%);
+    transform: translateX(-100%);
+    transition: transform 0.5s var(--ease-out-expo);
   }
+
+  /* Gold gradient on hover */
+  .btn-forge::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #ffd60a, #e63946);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+  }
+
+  .btn-forge:hover::before { transform: translateX(100%); }
+  .btn-forge:hover::after  { opacity: 1; }
+  .btn-forge:hover {
+    box-shadow: 0 0 40px rgba(230, 57, 70, 0.45), 0 0 80px rgba(230, 57, 70, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .btn-forge:active { transform: translateY(0); }
 
   .btn-forge span {
-    @apply relative z-10;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Secondary ghost button */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.5rem;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0;
+    cursor: pointer;
+    transition: color var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
+  }
+
+  .btn-ghost:hover {
+    color: var(--text-primary);
+    border-color: rgba(230, 57, 70, 0.3);
+    background: rgba(230, 57, 70, 0.05);
+  }
+
+  /* ------------------------------------------
+     ANIME CARD — main character display
+  ------------------------------------------ */
+  .anime-card {
+    position: relative;
+    background: linear-gradient(160deg, rgba(15, 15, 26, 0.98) 0%, rgba(10, 10, 20, 0.95) 100%);
+    border: 1px solid rgba(30, 30, 58, 0.9);
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  /* Dramatic top edge — crimson line */
+  .anime-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--crimson) 30%, var(--soul-gold) 70%, transparent 100%);
+  }
+
+  /* Subtle noise texture */
+  .anime-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.4;
+  }
+
+  /* ------------------------------------------
+     CHARACTER NAME — the hero element
+  ------------------------------------------ */
+  .character-name {
+    font-family: var(--font-title);
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #ffffff 0%, #ffd60a 45%, #e63946 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: nameShimmer 4s linear infinite;
+    text-shadow: none;
+  }
+
+  .character-title {
+    font-family: var(--font-heading);
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-top: 0.35rem;
+  }
+
+  /* ------------------------------------------
+     ARCHETYPE BADGE
+  ------------------------------------------ */
+  .archetype-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(230, 57, 70, 0.06);
+    border: 1px solid rgba(230, 57, 70, 0.2);
+    border-left: 3px solid var(--crimson);
+    font-family: var(--font-lore);
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: rgba(232, 232, 240, 0.75);
+    font-style: italic;
+    letter-spacing: 0.02em;
+  }
+
+  /* ------------------------------------------
+     BACKSTORY TEXT
+  ------------------------------------------ */
+  .lore-text {
+    font-family: var(--font-lore);
+    font-size: 0.875rem;
+    font-weight: 300;
+    line-height: 1.9;
+    color: rgba(232, 232, 240, 0.7);
+    letter-spacing: 0.01em;
+  }
+
+  /* ------------------------------------------
+     POWER BLOCK
+  ------------------------------------------ */
+  .power-block {
+    position: relative;
+    padding: 1rem 1.25rem;
+    background: rgba(76, 201, 240, 0.03);
+    border: 1px solid rgba(76, 201, 240, 0.12);
+    border-left: 3px solid var(--power-blue);
+    overflow: hidden;
+  }
+
+  /* Ambient glow behind power block */
+  .power-block::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 40%;
+    background: radial-gradient(ellipse at right, rgba(76, 201, 240, 0.06), transparent);
+    pointer-events: none;
+  }
+
+  .power-name {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--power-blue);
+    text-shadow: 0 0 20px rgba(76, 201, 240, 0.4);
+    margin-bottom: 0.35rem;
+  }
+
+  .technique-name {
+    font-family: var(--font-title);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--soul-gold);
+    text-shadow: 0 0 12px var(--soul-gold-glow);
+  }
+
+  .technique-text {
+    font-family: var(--font-lore);
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: rgba(232, 232, 240, 0.6);
+    font-style: italic;
+    margin-top: 0.25rem;
+  }
+
+  /* ------------------------------------------
+     CATCHPHRASE — the dramatic reveal
+  ------------------------------------------ */
+  .catchphrase {
+    position: relative;
+    font-family: var(--font-antique);
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: var(--soul-gold);
+    text-align: center;
+    padding: 1.25rem 2rem;
+    letter-spacing: 0.03em;
+    text-shadow: 0 0 30px rgba(255, 214, 10, 0.3);
+  }
+
+  .catchphrase::before {
+    content: '❝';
+    position: absolute;
+    top: 0.5rem;
+    left: 0.75rem;
+    font-size: 1.5rem;
+    color: rgba(255, 214, 10, 0.2);
+    font-family: serif;
+    line-height: 1;
+  }
+
+  .catchphrase::after {
+    content: '❞';
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.75rem;
+    font-size: 1.5rem;
+    color: rgba(255, 214, 10, 0.2);
+    font-family: serif;
+    line-height: 1;
+  }
+
+  /* ------------------------------------------
+     THEME SONG BLOCK
+  ------------------------------------------ */
+  .theme-song-block {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(123, 45, 139, 0.06);
+    border: 1px solid rgba(123, 45, 139, 0.15);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: rgba(232, 232, 240, 0.6);
+  }
+
+  .theme-song-block strong {
+    color: rgba(123, 45, 139, 0.9);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  /* Vinyl record icon */
+  .vinyl-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at center, rgba(123, 45, 139, 0.6) 20%, transparent 20%),
+      conic-gradient(rgba(123, 45, 139, 0.4) 0deg, rgba(30, 10, 40, 0.9) 60deg, rgba(123, 45, 139, 0.3) 120deg, rgba(30, 10, 40, 0.9) 180deg, rgba(123, 45, 139, 0.4) 240deg, rgba(30, 10, 40, 0.9) 300deg, rgba(123, 45, 139, 0.3) 360deg);
+    border: 1px solid rgba(123, 45, 139, 0.3);
+    flex-shrink: 0;
+    animation: vinylSpin 4s linear infinite;
+  }
+
+  /* ------------------------------------------
+     ALIGNMENT BADGE
+  ------------------------------------------ */
+  .alignment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  /* ------------------------------------------
+     SECTION HEADERS
+  ------------------------------------------ */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.875rem;
+  }
+
+  .section-header-text {
+    font-family: var(--font-body);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .section-header-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(255,255,255,0.06), transparent);
   }
 }
 
@@ -162,54 +750,191 @@
    UTILITIES
    ============================================ */
 @layer utilities {
-  .font-cinzel { font-family: 'Cinzel', serif; }
-  .font-cinzel-decorative { font-family: 'Cinzel Decorative', serif; }
-  .font-rajdhani { font-family: 'Rajdhani', sans-serif; }
-  .font-noto-jp { font-family: 'Noto Serif JP', serif; }
+  /* Fonts */
+  .font-cinzel           { font-family: var(--font-heading); }
+  .font-cinzel-deco      { font-family: var(--font-title); }
+  .font-rajdhani         { font-family: var(--font-body); }
+  .font-noto-jp          { font-family: var(--font-lore); }
+  .font-antique          { font-family: var(--font-antique); }
 
-  .text-glow-crimson {
-    text-shadow: 0 0 20px rgba(230, 57, 70, 0.6);
+  /* Glow text utilities */
+  .text-glow-crimson { text-shadow: 0 0 20px var(--crimson-glow), 0 0 60px rgba(230, 57, 70, 0.15); }
+  .text-glow-gold    { text-shadow: 0 0 20px var(--soul-gold-glow), 0 0 60px rgba(255, 214, 10, 0.15); }
+  .text-glow-blue    { text-shadow: 0 0 20px var(--power-blue-glow), 0 0 60px rgba(76, 201, 240, 0.15); }
+
+  /* Box glow utilities */
+  .shadow-glow-crimson { box-shadow: 0 0 30px rgba(230, 57, 70, 0.25), 0 0 60px rgba(230, 57, 70, 0.08); }
+  .shadow-glow-gold    { box-shadow: 0 0 30px rgba(255, 214, 10, 0.25), 0 0 60px rgba(255, 214, 10, 0.08); }
+  .shadow-glow-blue    { box-shadow: 0 0 30px rgba(76, 201, 240, 0.25), 0 0 60px rgba(76, 201, 240, 0.08); }
+
+  /* Shimmer text */
+  .shimmer-text {
+    background: linear-gradient(90deg, #ffffff 0%, #ffd60a 35%, #e63946 65%, #ffffff 100%);
+    background-size: 250% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: nameShimmer 4s linear infinite;
   }
 
-  .text-glow-gold {
-    text-shadow: 0 0 20px rgba(255, 214, 10, 0.6);
-  }
+  /* Blade clip shapes */
+  .clip-blade       { clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%); }
+  .clip-blade-sm    { clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%); }
+  .clip-blade-right { clip-path: polygon(0% 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%); }
+  .clip-blade-left  { clip-path: polygon(12px 0%, 100% 0%, 100% 100%, 0% 100%); }
 
-  .text-glow-blue {
-    text-shadow: 0 0 20px rgba(76, 201, 240, 0.6);
-  }
-
+  /* Noise texture overlay */
   .bg-noise {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
   }
 
-  .clip-blade {
-    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  /* Anime speed lines background */
+  .bg-speed-lines {
+    background-image: repeating-conic-gradient(
+      from 0deg,
+      rgba(255,255,255,0.01) 0deg,
+      rgba(255,255,255,0.01) 1deg,
+      transparent 1deg,
+      transparent 4deg
+    );
   }
 
-  .clip-blade-right {
-    clip-path: polygon(0% 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+  /* Dot grid */
+  .bg-dot-grid {
+    background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* Visibility helpers */
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Truncate */
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
 
 /* ============================================
    KEYFRAMES
    ============================================ */
-@keyframes statFill {
-  0% { width: 0%; opacity: 0.5; }
+
+/* Stat bar reveal — starts from 0, fills to CSS variable */
+@keyframes statReveal {
+  0%   { width: 0%; opacity: 0; }
+  10%  { opacity: 1; }
   100% { width: var(--stat-width, 0%); opacity: 1; }
 }
 
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+/* Dot appears at the leading edge of stat bar */
+@keyframes dotAppear {
+  0%   { opacity: 0; transform: translateY(-50%) scale(0); }
+  100% { opacity: 1; transform: translateY(-50%) scale(1); }
 }
 
-.shimmer-text {
-  background: linear-gradient(90deg, #ffd60a, #e63946, #ffd60a);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: shimmer 3s linear infinite;
+/* Character name gradient sweep */
+@keyframes nameShimmer {
+  0%   { background-position: 0% center; }
+  100% { background-position: 250% center; }
+}
+
+/* Card entry from below */
+@keyframes cardRise {
+  0%   { opacity: 0; transform: translateY(24px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Fade in with slight scale */
+@keyframes fadeIn {
+  0%   { opacity: 0; transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Slide in from left */
+@keyframes slideInLeft {
+  0%   { opacity: 0; transform: translateX(-16px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* Pulse glow */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* Vinyl rotation */
+@keyframes vinylSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Loading dots (for LoadingScreen.jsx) */
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40%           { transform: translateY(-8px); opacity: 1; }
+}
+
+/* Dramatic flash on card reveal */
+@keyframes flashReveal {
+  0%   { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+/* Scan line sweep effect */
+@keyframes scanSweep {
+  0%   { top: -10%; }
+  100% { top: 110%; }
+}
+
+/* Number count-up blur effect */
+@keyframes blurCount {
+  0%   { filter: blur(4px); opacity: 0; }
+  100% { filter: blur(0); opacity: 1; }
+}
+
+/* ============================================
+   ANIMATION UTILITIES
+   ============================================ */
+
+/* Framer-friendly helper classes for initial states */
+.animate-card-rise   { animation: cardRise  0.6s var(--ease-out-expo) forwards; }
+.animate-fade-in     { animation: fadeIn    0.5s var(--ease-out-expo) forwards; }
+.animate-slide-left  { animation: slideInLeft 0.4s var(--ease-out-expo) forwards; }
+
+/* Staggered animation delays */
+.delay-0   { animation-delay: 0ms; }
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+@media (max-width: 640px) {
+  .character-name { font-size: 1.3rem; }
+  .btn-forge      { padding: 0.75rem 1.75rem; letter-spacing: 0.2em; }
+  .catchphrase    { font-size: 0.9rem; padding: 1rem 1.5rem; }
 }
