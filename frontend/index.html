@@ -9,6 +9,9 @@
     <meta name="theme-color" content="#0a0a0f" />
     <title>Anime-ify Me — Forge Your Anime Identity</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a0a0f'/><text y='78' x='50' text-anchor='middle' font-size='70' font-family='serif' fill='%23e63946'>魂</text></svg>" />
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -229,14 +232,25 @@
         dot.style.top = e.clientY + 'px';
       });
 
-      // Dismiss preloader once React has mounted
+      // Dismiss preloader once React has mounted.
+      // Waits minimum 1400ms so the bar sweep animation always completes
+      // before fading — prevents an abrupt cut if React mounts too fast.
       window.dismissPreloader = function() {
         const p = document.getElementById('preloader');
-        if (p) {
+        if (!p) return;
+
+        const ANIM_MIN = 1400; // matches barSweep duration in CSS
+        const elapsed = performance.now() - window._preloaderStart;
+        const remaining = Math.max(0, ANIM_MIN - elapsed);
+
+        setTimeout(() => {
           p.classList.add('hidden');
           setTimeout(() => p.remove(), 900);
-        }
+        }, remaining);
       };
+
+      // Stamp the start time so elapsed can be calculated above
+      window._preloaderStart = performance.now();
     </script>
   </body>
 </html>
