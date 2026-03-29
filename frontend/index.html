@@ -239,7 +239,7 @@
         const p = document.getElementById('preloader');
         if (!p) return;
 
-        const ANIM_MIN = 1400; // matches barSweep duration in CSS
+        const ANIM_MIN = 800; // matches barSweep duration in CSS
         const elapsed = performance.now() - window._preloaderStart;
         const remaining = Math.max(0, ANIM_MIN - elapsed);
 
