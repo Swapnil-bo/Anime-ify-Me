@@ -1,3 +1,5 @@
+<div align="center">
+
 # ⚡ ANIME-IFY ME
 
 ### *Describe yourself. Become legend.*
