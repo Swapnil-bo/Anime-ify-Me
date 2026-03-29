@@ -27,7 +27,7 @@ const SPARKS = [
 ]
 
 function CharacterMeter({ count }) {
-  const pct     = Math.min((count / MAX_CHARS) * 100, 100)
+  const pct      = Math.min((count / MAX_CHARS) * 100, 100)
   const tooShort = count > 0 && count < MIN_CHARS
   const sweet    = count >= SWEET_SPOT.min && count <= SWEET_SPOT.max
   const tooLong  = count > MAX_CHARS
@@ -85,11 +85,11 @@ function SparkChip({ label, onClick }) {
       onClick={onClick}
       className="font-rajdhani text-xs px-3 py-1 tracking-wide"
       style={{
-        border:     '1px solid rgba(255,214,10,0.12)',
-        color:      'rgba(255,214,10,0.45)',
-        background: 'rgba(255,214,10,0.03)',
+        border:        '1px solid rgba(255,214,10,0.12)',
+        color:         'rgba(255,214,10,0.45)',
+        background:    'rgba(255,214,10,0.03)',
         letterSpacing: '0.05em',
-        cursor:     'none',
+        cursor:        'none',
       }}
       whileHover={{
         borderColor: 'rgba(255,214,10,0.35)',
@@ -105,11 +105,10 @@ function SparkChip({ label, onClick }) {
 }
 
 export default function InputForm({ onSubmit }) {
-  const [value,       setValue]       = useState('')
-  const [placeholder, setPlaceholder] = useState(PLACEHOLDERS[0])
+  const [value,          setValue]          = useState('')
+  const [placeholder,    setPlaceholder]    = useState(PLACEHOLDERS[0])
   const [placeholderIdx, setPlaceholderIdx] = useState(0)
-  const [isFocused,   setIsFocused]   = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isFocused,      setIsFocused]      = useState(false)
   const textareaRef = useRef(null)
 
   // Cycle placeholders every 4s when unfocused and empty
@@ -133,13 +132,16 @@ export default function InputForm({ onSubmit }) {
     el.style.height = `${Math.min(el.scrollHeight, 260)}px`
   }, [value])
 
-  const canSubmit = value.trim().length >= MIN_CHARS && value.trim().length <= MAX_CHARS && !isSubmitting
+  // Single source of truth for submit eligibility
+  const trimmed   = value.trim()
+  const canSubmit = trimmed.length >= MIN_CHARS && trimmed.length <= MAX_CHARS
 
-  const handleSubmit = async () => {
+  // App.jsx transitions to LOADING immediately on call —
+  // this component unmounts before "Forging..." could ever render,
+  // so no isSubmitting state is needed here.
+  const handleSubmit = () => {
     if (!canSubmit) return
-    setIsSubmitting(true)
-    await onSubmit(value.trim())
-    setIsSubmitting(false)
+    onSubmit(trimmed)
   }
 
   const handleKeyDown = (e) => {
@@ -210,7 +212,7 @@ export default function InputForm({ onSubmit }) {
             onBlur={() => setIsFocused(false)}
             onKeyDown={handleKeyDown}
             rows={4}
-            maxLength={MAX_CHARS + 10}
+            maxLength={MAX_CHARS}
             style={{ minHeight: '120px', lineHeight: 1.7 }}
           />
         </div>
@@ -288,9 +290,7 @@ export default function InputForm({ onSubmit }) {
             >
               ⚡
             </motion.span>
-            <span>
-              {isSubmitting ? 'Forging...' : 'Forge My Anime Self'}
-            </span>
+            <span>Forge My Anime Self</span>
           </span>
         </motion.button>
 
